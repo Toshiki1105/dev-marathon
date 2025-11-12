@@ -1,17 +1,20 @@
-name: ssh command
+name: Deploy to Staging
 
 on:
   push:
     branches:
-      - develop
+      - develop  # develop ブランチに push されたときだけ実行
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # リポジトリをチェックアウト
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # SSH で Staging サーバに接続して deploy.sh を実行
       - name: Run deploy script via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
