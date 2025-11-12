@@ -9,14 +9,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - id: ssh
-        uses: invi5H/ssh-action@v1
-        with:
-          SSH_HOST: ${{ secrets.DEV_SSH_HOST }}
-          SSH_PORT: ${{ secrets.DEV_SSH_PORT }}
-          SSH_USER: ${{ secrets.DEV_SSH_USER }}
-          SSH_KEY: ${{ secrets.DEV_SSH_KEY }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Run deploy script
-        run: ssh ${{ steps.ssh.outputs.SERVER }} bash /app/toshiki_tokio/deploy.sh toshiki_tokio
+      - name: Run deploy script via SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script: |
+            bash /app/toshiki_tokio/deploy.sh toshiki_tokio
 
