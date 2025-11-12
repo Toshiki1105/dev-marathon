@@ -1,27 +1,10 @@
-name: Deploy to Staging
-
-on:
-  push:
-    branches:
-      - develop  # develop ブランチに push されたときだけ実行
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      # リポジトリをチェックアウト
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # SSH で Staging サーバに接続して deploy.sh を実行
-      - name: Run deploy script via SSH
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.DEV_SSH_HOST }}
-          username: ${{ secrets.DEV_SSH_USER }}
-          key: ${{ secrets.DEV_SSH_KEY }}
-          port: ${{ secrets.DEV_SSH_PORT }}
-          script: |
-            bash /app/toshiki_tokio/deploy.sh toshiki_tokio
+- name: Run deploy script via SSH
+  uses: appleboy/ssh-action@v0.1.6
+  with:
+    host: ${{ secrets.DEV_SSH_HOST }}
+    username: ${{ secrets.DEV_SSH_USER }}
+    key: ${{ secrets.DEV_SSH_KEY }}
+    port: ${{ secrets.DEV_SSH_PORT }}
+    script: |
+      bash /app/toshiki_tokio/deploy.sh toshiki_tokio
 
