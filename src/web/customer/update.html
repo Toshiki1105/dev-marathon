@@ -1,22 +1,94 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
-    <!-- Bootstrap CSSの読み込み -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>顧客情報編集</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <!-- ここにHTMLを書く -->
-    </div>
-    <script type="module">
-        <!-- ここにJSを書く -->
-    </script>
-    <!-- BootstrapのJavaScriptの読み込み -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <div class="container mt-5">
+    <h2 class="mb-4">顧客情報を編集</h2>
+
+    <form id="update-form">
+      <div class="form-group">
+        <label for="companyName">会社名:</label>
+        <input type="text" class="form-control" id="companyName" name="companyName" required>
+      </div>
+
+      <div class="form-group">
+        <label for="industry">業種:</label>
+        <input type="text" class="form-control" id="industry" name="industry" required>
+      </div>
+
+      <div class="form-group">
+        <label for="contact">連絡先:</label>
+        <input type="text" class="form-control" id="contact" name="contact" required>
+      </div>
+
+      <div class="form-group">
+        <label for="location">所在地:</label>
+        <input type="text" class="form-control" id="location" name="location" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">更新</button>
+      <a href="list.html" class="btn btn-secondary ml-2">戻る</a>
+    </form>
+  </div>
+
+  <script type="module">
+    import config from "../config.js";
+
+    // URLからidを取得
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get("id");
+
+    // 顧客情報を取得してフォームに表示
+    async function loadCustomer() {
+      const response = await fetch(`${config.apiUrl}/customers/${customerId}`);
+      const customer = await response.json();
+
+      document.getElementById("companyName").value = customer.company_name;
+      document.getElementById("industry").value = customer.industry;
+      document.getElementById("contact").value = customer.contact;
+      document.getElementById("location").value = customer.location;
+    }
+
+    // フォーム送信時に更新
+    document.getElementById("update-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const confirmUpdate = confirm("この内容で更新しますか？");
+      if (!confirmUpdate) return;
+
+      const formData = {
+        companyName: document.getElementById("companyName").value,
+        industry: document.getElementById("industry").value,
+        contact: document.getElementById("contact").value,
+        location: document.getElementById("location").value
+      };
+
+      const response = await fetch(`${config.apiUrl}/customers/${customerId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert("顧客情報を更新しました。");
+        window.location.href = "list.html";
+      } else {
+        alert("更新に失敗しました。");
+      }
+    });
+
+    loadCustomer();
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
+

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>顧客詳細</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">顧客詳細</h2>
+    <table class="table table-bordered">
+      <tbody id="customer-detail"></tbody>
+    </table>
+    <a href="list.html" class="btn btn-secondary">← 一覧に戻る</a>
+  </div>
+
+  <script type="module">
+    import config from "../config.js";
+
+    // URLパラメータから id を取得
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    // APIからデータ取得
+    fetch(`${config.apiUrl}/customers/${id}`)
+      .then(response => response.json())
+      .then(data => {
+        const table = document.getElementById("customer-detail");
+
+        if (!data || !data.id) {
+          table.innerHTML = `<tr><td colspan="2">データが見つかりません。</td></tr>`;
+          return;
+        }
+
+        // 全カラムを動的に表示
+        for (const [key, value] of Object.entries(data)) {
+          const row = `
+            <tr>
+              <th>${key}</th>
+              <td>${value}</td>
+            </tr>
+          `;
+          table.innerHTML += row;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById("customer-detail").innerHTML =
+          `<tr><td colspan="2">エラーが発生しました。</td></tr>`;
+      });
+  </script>
+</body>
+</html>
